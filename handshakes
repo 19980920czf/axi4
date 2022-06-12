@@ -1,0 +1,50 @@
+module Handshakes #
+(
+ parameter WORD_WIDTH = 666
+
+)
+(
+ input       clk,
+ input       rst_n,
+ input       valid,
+ input  [WORD_WIDTH-1:0] data_in,
+ input       ready,
+ output   [WORD_WIDTH-1:0] data_out
+);
+
+reg      temp_valid;
+ reg [WORD_WIDTH-1:0] temp_data;
+ wire     temp_ready;
+
+always@(posedge clk)begin
+ if (!rst_n) begin
+  temp_valid <= 1'b0;
+ end
+ else if (valid)begin
+  temp_valid <= 1'b1;
+ end
+ else if (ready)begin
+  temp_valid <= 1'b0;
+ end
+ else begin
+  temp_valid <= temp_valid;
+ end
+end
+
+
+always@(posedge clk)begin
+ if (!rst_n)begin
+  temp_data <= 1'd0;
+ end
+ else if ((temp_ready) && (temp_valid))begin 
+  temp_data <= data_in;
+ end
+ else begin
+  temp_data <= temp_data; 
+ end
+end
+
+assign temp_ready = ready;
+assign data_out=temp_data;
+
+endmodule
